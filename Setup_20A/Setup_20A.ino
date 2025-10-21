@@ -215,6 +215,8 @@ Serial.println("Both PCA boards initialized (0x40, 0x41)");
   // delay(2000);  
   // --------------------------------------------------
 
+
+
   // --- Test 2 : Move actuators A-F simultaniously
   // --------------------------------------------------
   // Extend all A-F
@@ -233,7 +235,10 @@ Serial.println("Both PCA boards initialized (0x40, 0x41)");
   // for (int i=0; i<6; i++) moveActuator(i, 99);
   // --------------------------------------------------
 
-  // --- Test all actuators sequentially (A–T)
+
+
+  // --- Test 3 : Move all actuators sequentially (A–T)
+  // --------------------------------------------------
   // for (int i = 0; i < 20; i++) {
   //   Serial.print("Testing actuator ");
   //   Serial.println(i);
@@ -249,7 +254,11 @@ Serial.println("Both PCA boards initialized (0x40, 0x41)");
 
   //   moveActuator(i, 99);  // coast / stop again
   //   delay(500);
+  // --------------------------------------------------
 
+
+  // --- Test 4 : Move specific acutator 
+  // --------------------------------------------------
   int i = 0;
   moveActuator(i, 1); // extend F
   delay(1000);
@@ -257,10 +266,12 @@ Serial.println("Both PCA boards initialized (0x40, 0x41)");
   delay(500);
   moveActuator(i, -1); // extend F
   delay(1000);  
+  // --------------------------------------------------
 
-  // 2 3 16
 
-  // --- Diagnostic test: blink each PCA board separately ---
+
+  // --- Test 5 : Test if second PCA board is speaking
+  // --------------------------------------------------
   // Serial.println("=== Diagnostic: PCA board outputs ===");
 
   // // Board 1 (0x40) channel 0 ON
@@ -274,6 +285,8 @@ Serial.println("Both PCA boards initialized (0x40, 0x41)");
   // pca2.setPWM(0, 0, 3000);
   // delay(2000);
   // pca2.setPWM(0, 0, 0);
+  // --------------------------------------------------
+
 
 
 

@@ -1,0 +1,18 @@
+# Arduino build files
+*.hex
+*.elf
+*.bin
+
+# Mac/Windows junk
+.DS_Store
+Thumbs.db
+
+# VS Code specific
+.vscode/
+
+# PlatformIO (if ever used)
+.pio/
+
+# Arduino backup
+*.bak
+*.tmp
