@@ -19,12 +19,12 @@ NSed_FA2025/
 
 ### Authors
 - Ahmed, Noor - noor4@illinois.edu
-- Chamorro Chavez, Leonardo Patricio - lpchamo@illinois.edu
+- Chamorro Chavez, Leonardo Patricio - lpchamo@illinois.edu (advisor)
 - Elkamash, Mohamed - me21@illinois.edu
 - Figueroa, Marcos - marcosf4@illinois.edu
 - Paganini, Arthur - arthurp2@illinois.edu
 - Patel, Rishika - rpate@illinois.edu
-- Veranga, Joshua - veranga2@illinois.edu
+- Veranga, Joshua - veranga2@illinois.edu (repository owner)
 - Vozniak, Benjamin - vozniak2@illinois.edu
 
 ---
