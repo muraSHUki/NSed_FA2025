@@ -44,8 +44,8 @@ const uint8_t EN_CH[] = {
 // --- --- --- 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20
 const uint8_t IN1_PIN[] = { 2, 6, 10  ,  22, 26, 30  ,  34, 38, 42  ,  46};    // A, C, E  ,  G, I, K  ,  M, O, Q  ,  S 
 const uint8_t IN2_PIN[] = { 3, 7, 11  ,  23, 27, 31  ,  35, 39, 43  ,  47};    // A, C, E  ,  G, I, K  ,  M, O, Q  ,  S
-const uint8_t IN3_PIN[] = { 4, 8, 12  ,  24, 28, 32  ,  36, 40, 44  ,  48};    // B, D, F  ,  H, J, L  ,  N, P, R  ,  T
-const uint8_t IN4_PIN[] = { 5, 9, 13  ,  25, 29, 33  ,  37, 41, 45  ,  49};    // B, D, F  ,  H, J, L  ,  N, P, R  ,  T
+const uint8_t IN3_PIN[] = { 4, 50, 12  ,  24, 28, 32  ,  36, 40, 44  ,  48};    // B, D, F  ,  H, J, L  ,  N, P, R  ,  T
+const uint8_t IN4_PIN[] = { 5, 51, 13  ,  25, 29, 33  ,  37, 41, 45  ,  49};    // B, D, F  ,  H, J, L  ,  N, P, R  ,  T
 // ----------------------------------------------------------------------------------------------------
 
 
@@ -56,8 +56,8 @@ const uint8_t IN4_PIN[] = { 5, 9, 13  ,  25, 29, 33  ,  37, 41, 45  ,  49};    /
 // --- Constants
 // --- --- Power control for speed
 const uint16_t EN_OFF  = 0;
-const uint16_t EN_FULL = 2600;
-const uint16_t DEADTIME_MS = 120;
+const uint16_t EN_FULL = 4000;
+const uint16_t DEADTIME_MS = 20;
 
 // --- Helpers
 // --- --- Force PCA channel
@@ -219,20 +219,19 @@ Serial.println("Both PCA boards initialized (0x40, 0x41)");
 
   // --- Test 2 : Move actuators A-F simultaniously
   // --------------------------------------------------
-  // Extend all A-F
-  // for (int i=0; i<6; i++) moveActuator(i, 1);
+  // for (int i=0; i<20; i++) moveActuator(i, 1);
   // delay(2000);
 
   // // Coast all A-F
-  // for (int i=0; i<6; i++) moveActuator(i, 99);
+  // for (int i=0; i<20; i++) moveActuator(i, 99);
   // delay(500);
 
   // // Retract all A-F
-  // for (int i=0; i<6; i++) moveActuator(i, -1);
+  // for (int i=0; i<20; i++) moveActuator(i, -1);
   // delay(2000);
 
   // // Final coast
-  // for (int i=0; i<6; i++) moveActuator(i, 99);
+  // for (int i=0; i<20; i++) moveActuator(i, 99);
   // --------------------------------------------------
 
 
@@ -244,28 +243,30 @@ Serial.println("Both PCA boards initialized (0x40, 0x41)");
   //   Serial.println(i);
 
   //   moveActuator(i, 1);   // extend
-  //   delay(2000);
+  //   delay(500);
 
   //   moveActuator(i, 99);  // coast / stop
-  //   delay(500);
+  //   delay(100);
 
   //   moveActuator(i, -1);  // retract
-  //   delay(2000);
+  //   delay(500);
 
   //   moveActuator(i, 99);  // coast / stop again
-  //   delay(500);
+  //   delay(100);
+  // }
   // --------------------------------------------------
+  // 1 3 4 8 11 13 14 15 16
 
 
   // --- Test 4 : Move specific acutator 
   // --------------------------------------------------
-  int i = 0;
-  moveActuator(i, 1); // extend F
-  delay(1000);
-  moveActuator(i, 99); // extend F
-  delay(500);
-  moveActuator(i, -1); // extend F
-  delay(1000);  
+  // int i = 16;
+  // moveActuator(i, 1); // extend F
+  // delay(1000);
+  // moveActuator(i, 99); // extend F
+  // delay(500);
+  // moveActuator(i, -1); // extend F
+  // delay(1000);  
   // --------------------------------------------------
 
 
@@ -286,6 +287,80 @@ Serial.println("Both PCA boards initialized (0x40, 0x41)");
   // delay(2000);
   // pca2.setPWM(0, 0, 0);
   // --------------------------------------------------
+
+
+
+  // --- Test 6 : two-phase 5×4 wave (rows 0–3, 4–7, 8–11, 12–15, 16–19) ---
+  // -----------------------------------------------------------------------
+  for (int i = 0; i < 20; i++) moveActuator(i, -1);
+  delay(2000);
+  for (int i = 0; i < 20; i++) moveActuator(i, 99);
+  for (int i = 0; i < 20; i++) moveActuator(i, 1);
+  delay(1000);
+
+  // --- --- ROW DEFINITIONS
+  const uint8_t ROW1[] = {0, 1, 2, 3};
+  const uint8_t ROW2[] = {4, 5, 6, 7};
+  const uint8_t ROW3[] = {8, 9, 10, 11};
+  const uint8_t ROW4[] = {12, 13, 14, 15};
+  const uint8_t ROW5[] = {16, 17, 18, 19};
+
+  const uint8_t* ROWS[]   = {ROW1, ROW2, ROW3, ROW4, ROW5};
+  const uint8_t ROW_SIZES[] = {4, 4, 4, 4, 4};
+  const uint8_t NUM_ROWS = 5;
+
+  // --- --- HELPER: move one entire row
+  auto moveRow = [&](uint8_t rowIndex, int dir) {
+    if (rowIndex >= NUM_ROWS) return;
+    for (uint8_t j = 0; j < ROW_SIZES[rowIndex]; j++) {
+      moveActuator(ROWS[rowIndex][j], dir);
+    }
+  };
+
+  // --- --- PARAMETERS
+  const int phase_period_ms = 100;   // time each phase lasts (lower = faster)
+  const int cycles = 10;             // number of phase alternations
+
+  // --- --- MAIN LOOP
+  for (int c = 0; c < cycles; c++) {
+
+    // ---------- PHASE 1 ----------
+    // Odd rows (1,3,5 → 0,2,4 index) extend
+    // Even rows (2,4 → 1,3 index) retract
+    moveRow(0,  1);   // Row 1 up
+    moveRow(2,  1);   // Row 3 up
+    moveRow(4,  1);   // Row 5 up
+    moveRow(1, -1);   // Row 2 down
+    moveRow(3, -1);   // Row 4 down
+
+    delay(phase_period_ms);
+
+    // optional brief coast to avoid hard reversals
+    for (int i = 0; i < 20; i++) moveActuator(i, 99);
+    delay(30);
+
+    // ---------- PHASE 2 ----------
+    // Reverse directions
+    moveRow(0, -1);   // Row 1 down
+    moveRow(2, -1);   // Row 3 down
+    moveRow(4, -1);   // Row 5 down
+    moveRow(1,  1);   // Row 2 up
+    moveRow(3,  1);   // Row 4 up
+
+    delay(phase_period_ms);
+
+    for (int i = 0; i < 20; i++) moveActuator(i, 99);
+    delay(30);
+  }
+
+  // --- --- FINAL RETRACT / SHUTDOWN
+  for (int i = 0; i < 20; i++) moveActuator(i, -1);
+  delay(2000);
+  for (int i = 0; i < 20; i++) moveActuator(i, 99);
+
+  Serial.println("=== 2-phase 5×4 wave complete ===");
+  // -----------------------------------------------------------------------
+
 
 
 

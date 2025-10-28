@@ -1,0 +1,172 @@
+\documentclass[11pt]{amsart}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% PACKAGES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsfonts,amsmath,latexsym,amssymb,verbatim,amsbsy,amsthm}
+\usepackage{url}
+\usepackage[shortlabels]{enumitem}
+\usepackage{caption}
+\usepackage{float}
+\usepackage{wrapfig}
+\usepackage{graphicx}
+\usepackage{bigints}
+\usepackage{harpoon}
+\usepackage{physics}
+\usepackage{pythonhighlight}
+\usepackage[top=.5in, bottom=.5in, left=.69in, right=.69in]{geometry}
+%%%%%%          <<== TEMPLATE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% SHORTCUTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def \lp {\left(}
+\def \rp {\right)}
+%%%%%%%%%%%%%%%%%% GREEKS %%%%%%%%%%%%%%%%%%
+%%%%%% LOWER %%%%%%
+\def \a {\alpha}
+\def \b {\beta}
+\def \g {\gamma}
+\def \d {\delta}
+\def \e {\varepsilon}
+\def \f {\phi}
+\def \ff {\varphi}
+\def \l {\lambda}
+\def \n {\nabla}
+\def \s {\sigma}
+\def \t {\tau}
+\def \th {\theta}
+\def \o {\omega}
+\def \w {\omega}
+\def \m {\mu}
+\def \p {\rho}
+\def \ps {\psi}
+\def \z {\zeta}
+\def \ee {\epsilon}
+%%%%%% UPPER %%%%%%
+\def \D {\Delta}
+\def \G {\Gamma}
+\def \F {\Phi}
+\def \L {\Lambda}
+\def \Th {\Theta}
+\def \O {\Omega}
+\def \Ps {\Psi}
+\def \R {\mathcal{R}}
+
+%%%%%%%%%%%%%%%%%% MATH %%%%%%%%%%%%%%%%%%
+%%%%%% COMMANDS %%%%%%
+\newcommand{\pd}[2]{\frac{\partial{#1}}{\partial{#2}}}
+\newcommand{\ppd}[2]{\frac{\partial^2{#1}}{\partial{#2}^2}}
+\newcommand{\drd}[2]{\frac{\text{d}{#1}}{\text{d}{#2}}}
+\newcommand{\DrD}[2]{\frac{\text{D}{#1}}{\text{D}{#2}}}
+\newcommand{\ans}[1]{\text{\fbox{$#1$}}}
+\newcommand{\Rat}[1]{\mathcal{R}_{r,{#1}}}
+\newcommand{\Eq}[1]{\begin{equation}{#1}\end{equation}}
+\newcommand{\ord}[1]{\mathcal{O}\left({#1}\right)}
+%%%%%% SIMPLE %%%%%%
+\def \Ra {\Rightarrow}
+\def \ra {\rightarrow}
+\def \q {\partial}
+\def \rb {\rangle}
+\def \lb {\langle}
+\def \tf {\therefore}
+\def \bc {\because}
+\def \sin {\text{sin}}
+\def \cos {\text{cos}}
+\def \tan {\text{tan}}
+\def \cot {\text{cot}}
+\def \sep {,\qquad}
+
+
+\makeatletter
+\def\widebreve{\mathpalette\wide@breve}
+\def\wide@breve#1#2{\sbox\z@{$#1#2$}%
+     \mathop{\vbox{\m@th\ialign{##\crcr
+\kern0.08em\brevefill#1{0.8\wd\z@}\crcr\noalign{\nointerlineskip}%
+                    $\hss#1#2\hss$\crcr}}}\limits}
+\def\brevefill#1#2{$\m@th\sbox\tw@{$#1($}%
+  \hss\resizebox{#2}{\wd\tw@}{\rotatebox[origin=c]{90}{\upshape(}}\hss$}
+\makeatletter
+
+\def \ol {\overline}
+\def \til {\tilde}
+\def \wt {\widetilde}
+\def \bre {\breve}
+\def \wb {\widebreve}
+\def \wh {\widehat}
+
+%%%%%%%%%%%%%%%%%% UNITS %%%%%%%%%%%%%%%%%%
+\def \ms {\frac{\text{m}}{\text{s}}}
+\def \acc {\frac{\text{m}}{\text{s}^2}}
+\def \den {\frac{\text{kg}}{\text{m}^3}}
+\def \pres {\frac{\text{kg}}{\text{m}^2}}
+\def \nm {\frac{\text{N}}{\text{m}}}
+\def \tr {\text{Tr}}
+\def \gas {\frac{\text{J}}{\text{kg}\cdot\text{K}}}
+\def \kel {\text{K}}
+\def \cel {^o\text{C}}
+\def \kpa {\text{kPa}}
+\def \atm {\text{atm}}
+\def \mf {\frac{\text{kg}}{\text{s}}}
+\def \deg {^\text{o}}
+\def \rad {\text{rad}}
+\def \Re {\text{Re}}
+\def \Pr {\text{Pr}}
+\def \Nu {\text{Nu}}
+\def \con {\frac{\text{W}}{\text{m}\cdot\text{K}}}
+
+\usepackage{mhchem}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% DOCUMENT %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\title{2025/10/29 Chamorro Proposal Stuff}
+\author{The Navier-Stoked}
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Concepts for Wall Actuation in Boundary-Layer Flows}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Two experimental actuation strategies are proposed for the study of boundary-layer response to surface motion. The first introduces controlled wall--normal deformation of the test surface, directly altering the near-wall shear distribution. The second applies spanwise contraction or expansion of the lateral boundaries to impose cross-flow strain and modify the three-dimensional structure of turbulence. Together, these approaches provide a framework to assess directional sensitivity of wall-bounded turbulence to imposed wall motion.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Concept~A: Wall--Normal Surface Actuation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+In this concept, the solid boundary is rendered dynamically deformable by an embedded array of actuators producing time-dependent displacements in the wall-normal direction. By controlling these actuators, both standing and traveling deformation waves can be generated, enabling targeted excitation of specific turbulent scales.
+
+
+The imposed deformation modifies the instantaneous wall-normal velocity boundary condition and locally perturbs the pressure field. 
+
+\begin{itemize}
+    \item Quantify the effect of wall-normal surface motion on Reynolds stress distribution and turbulent kinetic energy near the wall.
+    \item Examine phase relationships between the actuation waveform and the natural bursting cycle.
+    \item Identify control regimes where deformation waves promote energy redistribution across turbulent scales.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Concept~B: Spanwise Contraction and Lateral Actuation}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The second approach investigates the influence of time-varying lateral confinement on boundary-layer structure.
+Here, the spanwise boundaries are driven with synchronized harmonic motion that periodically contracts and expands the effective channel width. Lateral actuation introduces a controlled, time-dependent spanwise strain field. This strain alters both the mean pressure distribution and the instantaneous orientation of large-scale motions within the boundary layer. 
+\begin{itemize}
+    \item Characterize how spanwise strain affects the organization and strength of streamwise vortices and low-speed streaks.
+    \item Compare lateral and wall-normal forcing to determine anisotropic response of turbulence to multi-axis wall motion.
+    \item Explore potential mechanisms for turbulent drag reduction or redistribution of Reynolds stresses through dynamic confinement.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Complementary Scope}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The two actuation concepts are intentionally orthogonal in their mode of forcing: 
+Concept~A modifies the local wall-normal boundary condition and directly exchanges momentum with the near-wall fluid, 
+while Concept~B
+
+\noindent\rule{\textwidth}{0.4pt}
+
+5cmx60cm 
+
+should be fine with both ``orientations of the wind tunnel'' --- approximate boundary layer thickness allows for valid testing
+
+
+
+
+
+
+\end{document}
