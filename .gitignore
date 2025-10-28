@@ -16,3 +16,7 @@ Thumbs.db
 # Arduino backup
 *.bak
 *.tmp
+
+more_proposal.pdf
+more_proposal.synctex.gz
+more_proposal.tex
