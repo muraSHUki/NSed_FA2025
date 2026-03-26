@@ -1,0 +1,264 @@
+// ----------------------------------------------------------------------------------------------------
+// CODE FOR CURRENT ACTUATOR SETUP
+// --- 18 actuators total
+// --- 2x9 setup
+//
+// NOTES FOR WHERE THINGS ARE CONNECTED
+//    |Actuator    | LN#   | D pins    | PCA V
+//  1 |A           |  1    |  2  3     | 1 - 0
+//  2 |B           |  1    |  4  5     | 2 - 0
+//  3 |C           |  2    |  6  7     | 1 - 1
+//  4 |D           |  2    | 50 51     | 2 - 1
+//  5 |E           |  3    | 10 11     | 1 - 2
+//  6 |F           |  3    | 12 13     | 2 - 2
+//  7 |G           |  4    | 22 23     | 1 - 3
+//  8 |H           |  4    | 24 25     | 2 - 3
+//  9 |I           |  5    | 26 27     | 1 - 4
+// 10 |J           |  5    | 28 29     | 2 - 4
+// 11 |K           |  6    | 30 31     | 1 - 5
+// 12 |L           |  6    | 32 33     | 2 - 5
+// 13 |M           |  7    | 34 35     | 1 - 6
+// 14 |N           |  7    | 36 37     | 2 - 6
+// 15 |O           |  8    | 38 39     | 1 - 7
+// 16 |P           |  8    | 40 41     | 2 - 7
+// 17 |Q           | 10    | 46 46     | 1 - 8
+// 18 |R           | 10    | 48 49     | 2 - 8
+// ----------------------------------------------------------------------------------------------------
+
+#include <Wire.h>
+#include <Adafruit_PWMServoDriver.h>
+
+// --- PCA boards ---
+Adafruit_PWMServoDriver pca1 = Adafruit_PWMServoDriver(0x40);
+Adafruit_PWMServoDriver pca2 = Adafruit_PWMServoDriver(0x41);
+
+// ----------------------------------------------------------------------------------------------------
+// ACTUATOR MAP
+// ----------------------------------------------------------------------------------------------------
+struct ActuatorMap {
+  char name;
+  uint8_t in1;
+  uint8_t in2;
+  uint8_t pcaBoard;    // 1 = pca1, 2 = pca2
+  uint8_t pcaChannel;
+};
+
+const ActuatorMap ACT[] = {
+  {'A',  2,  3, 1, 0},
+  {'B',  4,  5, 2, 0},
+  {'C',  6,  7, 1, 1},
+  {'D', 50, 51, 2, 1},
+  {'E', 10, 11, 1, 2},
+  {'F', 12, 13, 2, 2},
+  {'G', 22, 23, 1, 3},
+  {'H', 24, 25, 2, 3},
+  {'I', 26, 27, 1, 4},
+  {'J', 28, 29, 2, 4},
+  {'K', 30, 31, 1, 5},
+  {'L', 32, 33, 2, 5},
+  {'M', 34, 35, 1, 6},
+  {'N', 36, 37, 2, 6},
+  {'O', 38, 39, 1, 7},
+  {'P', 40, 41, 2, 7},
+  {'Q', 46, 47, 1, 8},
+  {'R', 48, 49, 2, 8}
+};
+
+const uint8_t NUM_ACT = sizeof(ACT) / sizeof(ACT[0]);
+
+// ----------------------------------------------------------------------------------------------------
+// CONTROL CONSTANTS
+// ----------------------------------------------------------------------------------------------------
+const uint16_t EN_OFF  = 0;
+const uint16_t EN_FULL = 4000;
+const uint16_t DEADTIME_MS = 10;
+
+// ----------------------------------------------------------------------------------------------------
+// PWM HELPER - define PCA boards
+// ----------------------------------------------------------------------------------------------------
+static inline void setEN(uint8_t board, uint8_t ch, uint16_t duty) {
+  if (duty > 4095) duty = 4095;
+
+  if (board == 1) {
+    pca1.setPWM(ch, 0, duty);
+  } else {
+    pca2.setPWM(ch, 0, duty);
+  }
+}
+
+// ----------------------------------------------------------------------------------------------------
+// ACTUATOR COMMAND
+// dir =  1  extend
+// dir = -1  retract
+// dir =  0  brake
+// dir = 99  coast
+// ----------------------------------------------------------------------------------------------------
+void moveActuator(uint8_t index, int dir) {
+  if (index >= NUM_ACT) return;
+
+  const ActuatorMap &a = ACT[index];
+
+  // Always disable drive before changing direction
+  setEN(a.pcaBoard, a.pcaChannel, EN_OFF);
+  digitalWrite(a.in1, LOW);
+  digitalWrite(a.in2, LOW);
+  delay(DEADTIME_MS);
+
+  if (dir == 1) {               // extend
+    digitalWrite(a.in1, HIGH);
+    digitalWrite(a.in2, LOW);
+    delay(DEADTIME_MS);
+    setEN(a.pcaBoard, a.pcaChannel, EN_FULL);
+
+  } else if (dir == -1) {       // retract
+    digitalWrite(a.in1, LOW);
+    digitalWrite(a.in2, HIGH);
+    delay(DEADTIME_MS);
+    setEN(a.pcaBoard, a.pcaChannel, EN_FULL);
+
+  } else if (dir == 0) {        // brake
+    digitalWrite(a.in1, HIGH);
+    digitalWrite(a.in2, HIGH);
+    setEN(a.pcaBoard, a.pcaChannel, EN_FULL);
+
+  } else if (dir == 99) {       // coast
+    // already disabled above, leave both pins low
+  }
+}
+
+// ----------------------------------------------------------------------------------------------------
+// GROUP HELPERS
+// ----------------------------------------------------------------------------------------------------
+void moveAll(int dir) {
+  for (uint8_t i = 0; i < NUM_ACT; i++) {
+    moveActuator(i, dir);
+  }
+}
+
+void moveGroup(const uint8_t group[], uint8_t size, int dir) {
+  for (uint8_t i = 0; i < size; i++) {
+    moveActuator(group[i], dir);
+  }
+}
+
+// ----------------------------------------------------------------------------------------------------
+// TEST 1 : sequential actuator check
+// ----------------------------------------------------------------------------------------------------
+void runTest1() {
+  Serial.println("=== Test 1: Sequential actuator test ===");
+
+  moveAll(-1);
+  delay(2000);
+
+  for (int i = 0; i < 18; i++) {
+    const uint8_t ACC[] = {i};
+    moveGroup(ACC, 1, 1);
+    delay(100);
+    moveGroup(ACC, 1, -1);
+    delay(100);
+  }
+
+  Serial.println("=== Test 1 complete ===");
+}
+
+// ----------------------------------------------------------------------------------------------------
+// TEST 2 : two-phase row wave
+// rows are:
+// 0-3, 4-7, 8-11, 12-15, 16-17
+// ----------------------------------------------------------------------------------------------------
+void runTest2() {
+  Serial.println("=== Test 2: 2-phase row wave ===");
+
+  const uint8_t ROW1[] = {0, 1, 2, 3};
+  const uint8_t ROW2[] = {4, 5, 6, 7};
+  const uint8_t ROW3[] = {8, 9, 10, 11};
+  const uint8_t ROW4[] = {12, 13, 14, 15};
+  const uint8_t ROW5[] = {16, 17};
+
+  // Optional initial retract
+  moveAll(-1);
+  delay(2000);
+  moveAll(99);
+  delay(300);
+
+  const int phase_period_ms = 100;
+  const int phase_gap_ms    = 30;
+  const int cycles          = 10;
+
+  for (int c = 0; c < cycles; c++) {
+    // Phase 1: odd rows up, even rows down
+    moveGroup(ROW1, 4,  1);
+    moveGroup(ROW3, 4,  1);
+    moveGroup(ROW5, 2,  1);
+    moveGroup(ROW2, 4, -1);
+    moveGroup(ROW4, 4, -1);
+
+    delay(phase_period_ms);
+
+    moveAll(99);
+    delay(phase_gap_ms);
+
+    // Phase 2: reverse
+    moveGroup(ROW1, 4, -1);
+    moveGroup(ROW3, 4, -1);
+    moveGroup(ROW5, 2, -1);
+    moveGroup(ROW2, 4,  1);
+    moveGroup(ROW4, 4,  1);
+
+    delay(phase_period_ms);
+
+    moveAll(99);
+    delay(phase_gap_ms);
+  }
+
+  // Final retract and stop
+  moveAll(-1);
+  delay(2000);
+  moveAll(99);
+
+  Serial.println("=== Test 2 complete ===");
+}
+
+// ----------------------------------------------------------------------------------------------------
+// SETUP
+// ----------------------------------------------------------------------------------------------------
+void setup() {
+  Serial.begin(115200);
+  Wire.begin();
+
+  pca1.begin();
+  pca2.begin();
+  pca1.setPWMFreq(1000);
+  pca2.setPWMFreq(1000);
+
+  Serial.println("PCA boards initialized: 0x40 and 0x41");
+
+  // Initialize all actuator direction pins and disable PWM
+  for (uint8_t i = 0; i < NUM_ACT; i++) {
+    pinMode(ACT[i].in1, OUTPUT);
+    pinMode(ACT[i].in2, OUTPUT);
+    digitalWrite(ACT[i].in1, LOW);
+    digitalWrite(ACT[i].in2, LOW);
+    setEN(ACT[i].pcaBoard, ACT[i].pcaChannel, EN_OFF);
+  }
+
+  delay(1000);
+
+  // ----------------------------------------------------------------
+  // CHOOSE ONLY ONE TEST TO RUN
+  // ----------------------------------------------------------------
+
+  runTest1();
+  // runTest2();
+
+  // ----------------------------------------------------------------
+  // Hold forever after test ends
+  // ----------------------------------------------------------------
+  while (true) {
+    delay(1000);
+  }
+}
+
+void loop() {
+  // not used
+}
